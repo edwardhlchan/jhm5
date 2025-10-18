@@ -82,57 +82,6 @@ src/
 └── index.css            # Global styles and chalkboard theme
 ```
 
-## 🎨 Customization
-
-### Chalkboard Colors
-
-The theme uses custom colors defined in `tailwind.config.js`:
-
-- **Chalkboard backgrounds**: Dark green tones (#0f1e0f to #2d4f2d)
-- **Chalk colors**: White (#f5f5dc), Yellow (#ffeb99), Red (#ff6b6b), Green (#90ee90)
-
-### Fonts
-
-Uses Google Fonts for authentic chalk handwriting:
-- Caveat
-- Patrick Hand
-
-## 📝 Key Components
-
-### MainMenu.jsx
-- Large prominent "Start Game" button
-- Secondary buttons for Instructions, About, and High Score
-- Modal dialogs with game information
-- Displays current high score
-
-### GameScreen.jsx
-- Real-time score and progress tracking
-- Lives display for Infinity Mode
-- Question display with large, readable text
-- Four answer buttons with color-coded feedback
-- 1-second pause after answer selection
-- Game over modal with detailed statistics
-
-### gameUtils.js
-- Question generation with multiple operations (+, -, ×, ÷)
-- Difficulty scaling based on score
-- LocalStorage high score management
-- Answer validation and scoring logic
-
-## 🚀 Performance
-
-- **React Compiler** enabled for automatic optimization
-- **Code splitting** via Vite for faster load times
-- **Tailwind CSS** purging for minimal CSS bundle size
-- **Efficient re-renders** with proper React hooks usage
-
-## 🌐 Browser Support
-
-- Chrome/Edge (latest)
-- Firefox (latest)
-- Safari (latest)
-- Mobile browsers (iOS Safari, Chrome Android)
-
 ## 📱 Responsive Design
 
 The game is fully responsive and adapts to:
@@ -154,16 +103,3 @@ Perfect for:
 - **HeroUI 2.8.5** for accessible, beautiful components
 - **Tailwind CSS 4** with custom chalkboard theme
 - **React Compiler** for automatic optimization
-- No sound effects (as per requirements)
-
-## 📄 License
-
-This project is open source and available under the MIT License.
-
-## 🤝 Contributing
-
-Contributions, issues, and feature requests are welcome!
-
----
-
-**Enjoy the game! 🎮✨**
