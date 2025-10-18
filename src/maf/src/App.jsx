@@ -10,11 +10,13 @@ function App() {
   const [currentView, setCurrentView] = useState('menu'); // 'menu' or 'game'
   const [gameMode, setGameMode] = useState(null); // 'EASY', 'MEDIUM', 'HARD', or 'INFINITY'
   const [useInputMode, setUseInputMode] = useState(false);
+  const [playerName, setPlayerName] = useState('');
 
   // Handle starting the game with selected mode
-  const handleStartGame = (mode, inputMode) => {
+  const handleStartGame = (mode, inputMode, name) => {
     setGameMode(mode);
     setUseInputMode(inputMode);
+    setPlayerName(name);
     setCurrentView('game');
   };
 
@@ -29,7 +31,12 @@ function App() {
       {currentView === 'menu' ? (
         <MainMenu onStartGame={handleStartGame} />
       ) : (
-        <GameScreen mode={gameMode} onBackToMenu={handleBackToMenu} useInputMode={useInputMode} />
+        <GameScreen 
+          mode={gameMode} 
+          onBackToMenu={handleBackToMenu} 
+          useInputMode={useInputMode}
+          playerName={playerName}
+        />
       )}
     </div>
   );

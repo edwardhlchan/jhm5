@@ -13,7 +13,7 @@ import {
  * GameScreen Component
  * Main game interface with questions, answers, score tracking, and game logic
  */
-const GameScreen = ({ mode, onBackToMenu, useInputMode }) => {
+const GameScreen = ({ mode, onBackToMenu, useInputMode, playerName }) => {
   // Game state
   const [score, setScore] = useState(0);
   const [questionNumber, setQuestionNumber] = useState(1);
@@ -230,7 +230,7 @@ const GameScreen = ({ mode, onBackToMenu, useInputMode }) => {
     setGameOver(true);
     
     if (isInfinityMode) {
-      const isNewHigh = saveHighScore(score);
+      const isNewHigh = saveHighScore(score, playerName);
       setIsNewHighScore(isNewHigh);
     }
     
@@ -365,19 +365,20 @@ const GameScreen = ({ mode, onBackToMenu, useInputMode }) => {
               <Input
                 type="number"
                 size="lg"
+                variant="bordered"
                 placeholder="Type answer and press Enter..."
                 value={inputValue}
                 onValueChange={setInputValue}
                 isDisabled={isAnswerLocked}
                 isInvalid={inputValidation === 'wrong'}
-                color={inputValidation === 'correct' ? 'success' : inputValidation === 'wrong' ? 'danger' : 'default'}
+                color={inputValidation === 'correct' ? 'success' : inputValidation === 'wrong' ? 'danger' : 'primary'}
                 classNames={{
-                  input: 'text-4xl text-center font-bold',
+                  input: 'text-4xl text-center font-bold chalk-text',
                   inputWrapper: inputValidation === 'correct' 
                     ? 'border-4 border-green-500 !bg-green-900/20' 
                     : inputValidation === 'wrong' 
                     ? 'border-4 border-red-500 !bg-red-900/20'
-                    : 'chalk-border',
+                    : 'chalk-border bg-chalkboard-light/50',
                 }}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {

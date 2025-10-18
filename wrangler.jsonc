@@ -1,14 +1,23 @@
 {
-  // Cloudflare Pages Configuration
-  // This file configures your project for deployment to Cloudflare Pages
+  // Cloudflare Workers Configuration
+  // This file configures your project for deployment to Cloudflare Workers
   
+  "$schema": "node_modules/wrangler/config-schema.json",
   "name": "my-portfolio",
   
-  // Specify compatibility date for Cloudflare Workers/Pages runtime
+  // Main worker entry point
+  "main": "index.js",
+  
+  // Specify compatibility date for Cloudflare Workers runtime
   "compatibility_date": "2025-01-01",
   
-  // Pages-specific configuration
-  "pages_build_output_dir": "./public",
+  // Static Assets configuration for Workers
+  "assets": {
+    // The path to the directory containing the static files
+    "directory": "./public",
+    // Binding name to access assets in the worker
+    "binding": "ASSETS"
+  },
   
   // KV namespace bindings for the TOD app
   "kv_namespaces": [
@@ -17,24 +26,18 @@
       "id": "41a69c0f17014c42a7d9ab630f46fcac",
       "preview_id": "e6c74278e75e4072a9946641c27c85d2"
     }
-  ]
+  ],
+  
+  // Enable observability
+  "observability": {
+    "enabled": true
+  }
   
   // Optional: Environment variables for production
   // "vars": {
   //   "ENVIRONMENT": "production"
   // },
   
-  // Optional: Configure custom domains (after deployment)
-  // "routes": [
-  //   {
-  //     "pattern": "portfolio.yourdomain.com",
-  //     "custom_domain": true
-  //   }
-  // ],
-  
-  // Optional: Define build command if you have a build step
-  // Note: For this static portfolio, we use the generate script
-  // "build": {
-  //   "command": "npm run generate"
-  // }
+  // Optional: Smart Placement
+  // "placement": { "mode": "smart" }
 }

@@ -166,16 +166,36 @@ export const generateQuestion = (settings) => {
 };
 
 /**
- * Save high score to localStorage
+ * Save high score to localStorage with player name
  * @param {number} score - Score to save
+ * @param {string} playerName - Player's name (optional)
+ * @returns {boolean} True if new high score
  */
-export const saveHighScore = (score) => {
+export const saveHighScore = (score, playerName = '') => {
   const currentHighScore = getHighScore();
-  if (score > currentHighScore) {
+  const isNewHigh = score > currentHighScore;
+  
+  if (isNewHigh) {
     localStorage.setItem('mathReactionHighScore', score.toString());
-    return true;
   }
-  return false;
+  
+  // Save to leaderboard
+  const leaderboard = getLeaderboard();
+  const name = playerName.trim() || localStorage.getItem('mathReactionPlayerName') || 'Anonymous';
+  
+  leaderboard.push({
+    name: name,
+    score: score,
+    date: new Date().toISOString(),
+  });
+  
+  // Sort by score descending and keep top 10
+  leaderboard.sort((a, b) => b.score - a.score);
+  const topScores = leaderboard.slice(0, 10);
+  
+  localStorage.setItem('mathReactionLeaderboard', JSON.stringify(topScores));
+  
+  return isNewHigh;
 };
 
 /**
@@ -188,8 +208,18 @@ export const getHighScore = () => {
 };
 
 /**
- * Reset high score
+ * Get leaderboard from localStorage
+ * @returns {Array} Array of leaderboard entries
+ */
+export const getLeaderboard = () => {
+  const leaderboard = localStorage.getItem('mathReactionLeaderboard');
+  return leaderboard ? JSON.parse(leaderboard) : [];
+};
+
+/**
+ * Reset high score and leaderboard
  */
 export const resetHighScore = () => {
   localStorage.removeItem('mathReactionHighScore');
+  localStorage.removeItem('mathReactionLeaderboard');
 };

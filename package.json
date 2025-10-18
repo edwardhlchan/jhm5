@@ -6,9 +6,9 @@
   "scripts": {
     "generate": "node scripts/generate-index.js",
     "generate:no-build": "node scripts/generate-index.js --no-build",
-    "preview": "npm run generate && npx serve public",
-    "deploy": "npm run generate && npx wrangler pages deploy public",
-    "dev": "npx serve public",
+    "preview": "npm run generate && npx wrangler dev",
+    "deploy": "npm run generate && npx wrangler deploy",
+    "dev": "npx wrangler dev",
     "clean": "rimraf public && rimraf src/*/dist"
   },
   "keywords": [

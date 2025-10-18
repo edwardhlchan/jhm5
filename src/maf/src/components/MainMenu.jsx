@@ -1,26 +1,42 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Card, CardBody, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Switch } from '@heroui/react';
-import { getHighScore } from '../utils/gameUtils';
+import { Button, Card, CardBody, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Switch, Input } from '@heroui/react';
+import { getHighScore, getLeaderboard } from '../utils/gameUtils';
 
 /**
  * MainMenu Component
- * Displays the main menu with game mode selection, instructions, about, and high score
+ * Displays the main menu with game mode selection, instructions, about, and leaderboard
  */
 const MainMenu = ({ onStartGame }) => {
   const [highScore, setHighScore] = useState(0);
+  const [leaderboard, setLeaderboard] = useState([]);
+  const [playerName, setPlayerName] = useState('');
   const [useInputMode, setUseInputMode] = useState(false);
   const { isOpen: isInstructionsOpen, onOpen: onInstructionsOpen, onClose: onInstructionsClose } = useDisclosure();
   const { isOpen: isAboutOpen, onOpen: onAboutOpen, onClose: onAboutClose } = useDisclosure();
   const { isOpen: isModeSelectOpen, onOpen: onModeSelectOpen, onClose: onModeSelectClose } = useDisclosure();
+  const { isOpen: isLeaderboardOpen, onOpen: onLeaderboardOpen, onClose: onLeaderboardClose } = useDisclosure();
 
-  // Load high score on component mount
+  // Load high score and leaderboard on component mount
   useEffect(() => {
     setHighScore(getHighScore());
+    setLeaderboard(getLeaderboard());
+    // Load saved player name
+    const savedName = localStorage.getItem('mathReactionPlayerName');
+    if (savedName) {
+      setPlayerName(savedName);
+    }
   }, []);
+
+  // Save player name when it changes
+  useEffect(() => {
+    if (playerName.trim()) {
+      localStorage.setItem('mathReactionPlayerName', playerName.trim());
+    }
+  }, [playerName]);
 
   const handleStartGame = (mode) => {
     onModeSelectClose();
-    onStartGame(mode, useInputMode);
+    onStartGame(mode, useInputMode, playerName);
   };
 
   return (
@@ -41,16 +57,64 @@ const MainMenu = ({ onStartGame }) => {
           </CardBody>
         </Card>
 
-        {/* High Score Display */}
-        {highScore > 0 && (
+        {/* Leaderboard Display */}
+        {leaderboard.length > 0 && (
           <Card className="chalk-border bg-chalkboard-light/50 backdrop-blur-sm mb-6">
-            <CardBody className="p-4 text-center">
-              <p className="text-2xl chalk-text">
-                🏆 High Score: <span className="text-chalk-yellow font-bold">{highScore}</span>
-              </p>
+            <CardBody className="p-4">
+              <div className="flex justify-between items-center mb-3">
+                <h3 className="text-2xl chalk-text font-bold text-chalk-yellow">🏆 Leaderboard</h3>
+                <Button
+                  size="sm"
+                  color="primary"
+                  variant="light"
+                  className="chalk-text"
+                  onClick={onLeaderboardOpen}
+                >
+                  View All
+                </Button>
+              </div>
+              <div className="space-y-2">
+                {leaderboard.slice(0, 3).map((entry, index) => (
+                  <div
+                    key={index}
+                    className="flex justify-between items-center p-2 rounded-lg chalk-border bg-chalkboard-green/30"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl font-bold chalk-text">
+                        {index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉'}
+                      </span>
+                      <span className="text-lg chalk-text font-semibold">
+                        {entry.name || 'Anonymous'}
+                      </span>
+                    </div>
+                    <span className="text-xl chalk-text text-chalk-yellow font-bold">
+                      {entry.score}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </CardBody>
           </Card>
         )}
+
+        {/* Player Name Input */}
+        <div className="mb-6">
+          <Input
+            type="text"
+            size="lg"
+            variant="faded"
+            label="Player Name"
+            placeholder="Enter your name..."
+            value={playerName}
+            onValueChange={setPlayerName}
+            maxLength={20}
+            classNames={{
+              input: 'text-xl font-semibold chalk-text',
+              label: 'text-lg chalk-text',
+              inputWrapper: 'chalk-border bg-chalkboard-light/30',
+            }}
+          />
+        </div>
 
         {/* Main Action Buttons */}
         <div className="space-y-4">
@@ -92,9 +156,9 @@ const MainMenu = ({ onStartGame }) => {
               color="primary"
               variant="bordered"
               className="chalk-border text-xl py-6"
-              onClick={() => setHighScore(getHighScore())}
+              onClick={onLeaderboardOpen}
             >
-              🏆 High Score: {highScore}
+              🏆 Leaderboard
             </Button>
           </div>
 
@@ -412,6 +476,89 @@ const MainMenu = ({ onStartGame }) => {
                 Close
               </Button>
             </ModalFooter>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
+
+        {/* Leaderboard Modal */}
+        <Modal
+          isOpen={isLeaderboardOpen}
+          onOpenChange={onLeaderboardClose}
+          size="2xl"
+          backdrop="opaque"
+          placement="center"
+          scrollBehavior="inside"
+          motionProps={{
+            variants: {
+              enter: {
+                opacity: 1,
+                transition: {
+                  duration: 0,
+                },
+              },
+              exit: {
+                opacity: 0,
+                transition: {
+                  duration: 0,
+                },
+              },
+            },
+          }}
+          classNames={{
+            base: "chalk-border bg-chalkboard",
+            header: "border-b border-chalk-white/20",
+            body: "py-6",
+            footer: "border-t border-chalk-white/20"
+          }}
+        >
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalHeader className="flex flex-col gap-1">
+                  <h3 className="text-3xl chalk-text font-bold text-center">🏆 Top Players</h3>
+                </ModalHeader>
+                <ModalBody>
+                  {leaderboard.length > 0 ? (
+                    <div className="space-y-3">
+                      {leaderboard.map((entry, index) => (
+                        <div
+                          key={index}
+                          className={`flex justify-between items-center p-4 rounded-lg chalk-border ${
+                            index < 3 ? 'bg-chalkboard-green/40' : 'bg-chalkboard-light/20'
+                          }`}
+                        >
+                          <div className="flex items-center gap-4">
+                            <span className="text-3xl font-bold chalk-text min-w-[3rem]">
+                              {index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`}
+                            </span>
+                            <span className="text-xl chalk-text font-semibold">
+                              {entry.name || 'Anonymous'}
+                            </span>
+                          </div>
+                          <span className="text-2xl chalk-text text-chalk-yellow font-bold">
+                            {entry.score}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <p className="text-2xl chalk-text opacity-70">No scores yet!</p>
+                      <p className="text-lg chalk-text opacity-50 mt-2">Play Infinity Mode to get on the leaderboard</p>
+                    </div>
+                  )}
+                </ModalBody>
+                <ModalFooter>
+                  <Button
+                    color="primary"
+                    variant="shadow"
+                    onClick={onClose}
+                    className="chalk-border"
+                  >
+                    Close
+                  </Button>
+                </ModalFooter>
               </>
             )}
           </ModalContent>
